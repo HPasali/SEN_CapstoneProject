@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintProfile"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="activities.ProfilePage">
+
+    <TextView
+        android:id="@+id/lblActiveReservationInfo"
+        android:layout_width="239dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="4dp"
+        android:text="Active Reservation Information"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.093"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtNameOfCarPark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        android:text="Selected Car Park Name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblActiveReservationInfo" />
+
+    <TextView
+        android:id="@+id/txtSelectedCarParkName"
+        android:layout_width="68dp"
+        android:layout_height="21dp"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="40dp"
+        android:text="X"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toEndOf="@+id/txtNameOfCarPark"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtSelectedChargeStation"
+        android:layout_width="69dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="16dp"
+        android:text="X"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.427"
+        app:layout_constraintStart_toEndOf="@+id/lblSelectedChargeStation"
+        app:layout_constraintTop_toBottomOf="@+id/txtSelectedCarParkName" />
+
+    <TextView
+        android:id="@+id/txtDuration"
+        android:layout_width="70dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="180dp"
+        android:layout_marginTop="20dp"
+        android:text="X"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.409"
+        app:layout_constraintStart_toEndOf="@+id/lblDuration"
+        app:layout_constraintTop_toBottomOf="@+id/txtSelectedChargeStation" />
+
+    <TextView
+        android:id="@+id/lblDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:text="Duration"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblSelectedChargeStation" />
+
+    <TextView
+        android:id="@+id/lblSelectedChargeStation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:text="Selected Charge Station"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtNameOfCarPark" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="211dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="230dp"
+        android:text="Profile Informations"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.115"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtProfilePhoneNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="75dp"
+        android:layout_marginTop="28dp"
+        android:hint="+905555555555"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/lblProfilePhoneNumber"
+        app:layout_constraintTop_toBottomOf="@+id/txtProfileEmail" />
+
+    <TextView
+        android:id="@+id/txtProfileEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="24dp"
+        android:hint="jmartinez@gmail.com"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/lblProfileEmail"
+        app:layout_constraintTop_toBottomOf="@+id/txtProfileSurname" />
+
+    <TextView
+        android:id="@+id/txtProfileSurname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="20dp"
+        android:hint="Martinez"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/lblProfileSurname"
+        app:layout_constraintTop_toBottomOf="@+id/txtProfileName" />
+
+    <ImageButton
+        android:id="@+id/imageButton3"
+        android:layout_width="33dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="230dp"
+        android:layout_marginEnd="48dp"
+        android:onClick="moveToEditProfile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.989"
+        app:layout_constraintStart_toEndOf="@+id/textView8"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_edit" />
+
+    <TextView
+        android:id="@+id/lblProfileEmail"
+        android:layout_width="69dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="E-Mail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblProfileSurname" />
+
+    <Button
+        android:id="@+id/btnSignOut"
+        android:layout_width="117dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="440dp"
+        android:onClick="moveBackToLoginPage"
+        android:text="SIGN OUT"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.469"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtProfileName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="268dp"
+        android:hint="Jack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/lblProfileName"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/lblProfilePhoneNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="Phone Number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblProfileEmail" />
+
+    <TextView
+        android:id="@+id/lblProfileSurname"
+        android:layout_width="66dp"
+        android:layout_height="21dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="20dp"
+        android:text="Surname"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblProfileName" />
+
+    <TextView
+        android:id="@+id/lblProfileName"
+        android:layout_width="66dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:text="Name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="99dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="160dp"
+        android:text="Open Lock"
+        app:layout_constraintEnd_toStartOf="@+id/button4"
+        app:layout_constraintHorizontal_bias="0.298"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="175dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="160dp"
+        android:layout_marginEnd="40dp"
+        android:text="CANCEL RESERVATION"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/container_edit"
+        android:layout_width="396dp"
+        android:layout_height="712dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.466"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.473"></FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

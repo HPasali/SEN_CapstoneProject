@@ -1,0 +1,5 @@
+package com.example.capstoneproject_1;
+
+public class Constants{
+    public static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
+}
