@@ -15,6 +15,11 @@ import fragments.EditProfileFragment;
 
 public class ProfilePage extends AppCompatActivity {
 
+    /*TODO: RegisterPage'de kullanicidan alinip Firebase uzerinde RealTimeDb'ye kaydedilen name, surname, email gibi bilgiler getirilip
+           profil sayfasinda gosterilecek ve EditProfileFragment'ta bu bilgiler degistirilince db'ye guncellenen verileri gonderip tekrar ProfilePage'e
+           donulunce guncellenen veriler gosterilecek.
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
