@@ -12,14 +12,21 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.regex.Pattern;
 //import com.google.firebase.auth.FirebaseUser;
 
 public class LoginPage extends AppCompatActivity {
+    //---------Regex Patterns;------------------------
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("[a-z0-9]+@[a-z]+\\.[a-z]{2,3}"); //username@domain.com
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=])(?=\\S+$).{6,16}$"); //min 6 characters are needed to be saved on Firebase Db.
+
     private FirebaseAuth mAuth =  FirebaseAuth.getInstance(); // Initialize Firebase Auth
     String userEmail = "";
     String userPassword = "";
 
-    //TODO:Login olan kullanici icin farkli bir islem yapilacaksa burada anlik login olan kullanici bilgisini alip kontrol edebilirsin.
+
+    //=>Login olan kullanici icin farkli bir islem yapilacaksa burada anlik login olan kullanici bilgisini alip kontrol edebilirsin.
     /*@Override
     public void onStart() {
         super.onStart();
@@ -57,13 +64,22 @@ public class LoginPage extends AppCompatActivity {
                 final String email = txtEmail.getText().toString();
                 final String password = txtPassword.getText().toString();
 
-                if (email.isEmpty() || password.isEmpty()) {
+                /*if (email.isEmpty() || password.isEmpty()) {
                     System.out.println(email);
                     System.out.println(password);
                     Toast.makeText(LoginPage.this, "Please enter your email and password", Toast.LENGTH_SHORT).show();
                     return;
-                }
+                }*/
 
+                //=>If all inputs' formats do not match with the specified Regex patterns, then Login operation should fail;
+                if(!checkLoginInputs(email,EMAIL_PATTERN) || !checkLoginInputs(password, PASSWORD_PATTERN))
+                {
+                    System.out.println("------------------------------------");
+                    System.out.println("Email: " + email);
+                    System.out.println("Password: "+ password);
+                    System.out.println("------------------------------------");
+                    return;
+                }
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
@@ -104,4 +120,19 @@ public class LoginPage extends AppCompatActivity {
             toast.show();
         }
     }*/
+
+    //=>Regex Control For The Login Inputs (Email and Password Validation);
+    public boolean checkLoginInputs(String text, Pattern pattern){
+        if(text.isEmpty()) {
+            Toast.makeText(LoginPage.this, "Please enter your email and password", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if(pattern.matcher(text).matches() == false){
+            Toast.makeText(LoginPage.this, "Entered values are in the wrong format, please check the hint texts.",
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else
+            return true;
+    }
 }

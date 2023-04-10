@@ -29,16 +29,17 @@ public class RegisterPage extends AppCompatActivity {
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=])(?=\\S+$).{6,16}$"); //min 6 characters are needed to be saved on Firebase Db.
     //'P@ssw1rd' =>Contains at least one uppercase letter (P), one lowercase letter (s), one digit (0), and one special character (@), Does not contain any whitespace characters and meets the length requirement
     // of 6 characters.
+    /*=>TODO: Password icin regex pattern duzenlenebilir/degistirilebilir. Ayrica ortak olarak bu static REGEXleri kullanidigin classlar icin bunlari tek bir classta toplayip kullanacagin yerlerde
+             instance olusturup kullanabilirsin.
+     */
 
     private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^\\+(?:[0-9]?){6,14}[0-9]$"); //+905555555555
     private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z\\s'-]+$"); //John Doe, O'Connor, Smith-Jones
     private static final Pattern SURNAME_PATTERN = Pattern.compile("^[A-Za-z\\s'-]+$"); //John Doe, O'Connor, Smith-Jones
     //-------------------------------------------
 
-    /*TODO: 'actitivty_register_page.xml' layout'undaki alanlari Regex gibi bir yapiyla kontrol edip FirebaseAuth ve RealTimeDb'ye veri gondermen daha dogru olur.
-             Bunlar icin kontrol eklenecek. ==> Eklendi. Firebase'den register esnasinda hatalar icin try-catch bloklari ile ekranda mesaj gosterecek kontroller de eklendi.
-             Ayni kontroller Login ekranlarina da eklenecek!!
-     */
+    /**Firebase'den register esnasinda hatalar icin try-catch bloklari ile ekranda mesaj gosterecek kontroller de eklendi.
+       Ayni kontroller Login ekranlarina da eklenecek!!*/
 
     /**=>The registered users' email and password informations are added to the FirebaseAuth db and then the additional informations for the user which
     are their name, surname, phone number (with the created User object) are added to the RealTimeDb on the given reference url below after the authentication process is completed.
@@ -77,27 +78,7 @@ public class RegisterPage extends AppCompatActivity {
                     return;
                 }*/
 
-                //------------------
-                /*if(EMAIL_PATTERN.matcher(email).matches() == false)
-                    System.out.println("EMAIL IS WRONG");
-
-                if(PHONE_NUMBER_PATTERN.matcher(phoneNumber).matches() == false) {
-                    System.out.println("Phone Number IS WRONG");
-                    System.out.println(phoneNumber);
-                    System.out.println(PHONE_NUMBER_PATTERN);
-                }
-                if(NAME_PATTERN.matcher(name).matches() == false)
-                    System.out.println("NAME IS WRONG");
-
-                if(SURNAME_PATTERN.matcher(surname).matches() == false)
-                    System.out.println("SURNAME IS WRONG");
-
-                if(PASSWORD_PATTERN.matcher(password).matches() == false)
-                    System.out.println("PASSWORD IS WRONG");
-                 */
-                //----------------
-
-                //=>If all inputs does not match with the specified Regex patterns, then Register operation should be cancelled;
+                //=>If all inputs do not match with the specified Regex patterns, then Register operation should be cancelled;
                 if(!checkInputs(email,EMAIL_PATTERN) || !checkInputs(password, PASSWORD_PATTERN) || !checkInputs(name,NAME_PATTERN)
                         || !checkInputs(surname, SURNAME_PATTERN) || !checkInputs(phoneNumber,PHONE_NUMBER_PATTERN))
                 {
