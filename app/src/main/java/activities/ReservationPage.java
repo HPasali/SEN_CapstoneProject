@@ -28,9 +28,7 @@ public class ReservationPage extends AppCompatActivity {
     }
 
     public void redirectToProfilePage(View v){
-        /** TODO: Intent ile rezervasyon yapilan car park bilgisi `Active Reservation Information` olarak ProfilePage'de gosterilmek uzere ProfilePage
-         * sayfasina iletilecek
-        */
+        //TODO: Intent ile rezervasyon yapilan car park bilgisi `Active Reservation Information` olarak ProfilePage'de gosterilmek uzere ProfilePage sayfasina iletilecek.
         Intent i = new Intent(this,ProfilePage.class);
         startActivity(i);
     }

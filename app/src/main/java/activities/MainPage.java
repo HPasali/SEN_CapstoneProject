@@ -1,36 +1,36 @@
 package activities;
-
-import static com.example.capstoneproject_1.Constants.MAPVIEW_BUNDLE_KEY;
-
+import static helpers.Constants.MAPVIEW_BUNDLE_KEY;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
-
-import com.example.capstoneproject_1.Constants;
+import helpers.Constants;
 import com.example.capstoneproject_1.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import fragments.CarParkDetailFragment;
 
-/**!!!!INCELENECEK:::: AndroidManifest.xml'de cagrilan ve local.properties'de tanimlanan ${MAPS_API_KEY}  degerinin, Google Cloud icin pricing mailini ve kart
- * bilgilerini girdikten sonra aldigin api-key degeri olmasi gerekiyor. Su an icin api-key alinmadi ama bu islemler tamamlanip api-key alindiktan sonra
- * local.properties altinda api-key degernin degistirilmesi gerekiyor. Ayni zamanda MapsActivity su anda gostermek ve acilip acilmadigini kontrol etmek adina
- * olusturuldu. Harita ekrani MainPage'de gosterilecek ve sonrasinda islem saglaninca MapsActivity de silinebilir. MapView ile atanacak su anda MapFragment ile
- * degil ama api-key aldiktan sonra MapFragment kullanimina da basvurulabilir. Bu saglandiktan sonra, yine haritayi kullanan 'CarParkDetailPage' de
- * olusturulabilir.
-* */
-public class MainPage extends AppCompatActivity implements OnMapReadyCallback {
+
+/** A new project and api-key is created on Google Cloud platform. Then this created api-key is given in local.properties in order to be able to fetch the map which is
+ * provided by Google Maps. Then this map is placed onto the 'mapViewCarPark' "MapView" that is created on 'acitivity_main_page' layout file.
+ *  */
+public class MainPage extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private MapView mMapView;
+    private double latBau = 41.04237536231388;
+    private double lonBau = 29.009312741127506;
+    private final float zoomRatio = (float) 13.5;
+    private String titleOfTheMarker = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,30 +39,26 @@ public class MainPage extends AppCompatActivity implements OnMapReadyCallback {
         initGoogleMap(savedInstanceState);
     }
 
-    private void initGoogleMap(Bundle savedInstanceState){
+    private void initGoogleMap(Bundle savedInstanceState) {
         // *** IMPORTANT ***
-        // MapView requires that the Bundle you pass contain _ONLY_ MapView SDK
-        // objects or sub-Bundles.
+        // MapView requires that the Bundle you pass contain _ONLY_ MapView SDK objects or sub-Bundles.
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(Constants.MAPVIEW_BUNDLE_KEY);
         }
         mMapView = (MapView) findViewById(R.id.mapViewCarPark);
         mMapView.onCreate(mapViewBundle);
-
         mMapView.getMapAsync(this);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
         Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
         if (mapViewBundle == null) {
             mapViewBundle = new Bundle();
             outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
         }
-
         mMapView.onSaveInstanceState(mapViewBundle);
     }
 
@@ -86,36 +82,22 @@ public class MainPage extends AppCompatActivity implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap map) {
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        map.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        // Add a marker in BAU South Campus and move the camera;
+        LatLng bauSouthCampus = new LatLng(latBau, lonBau); //-34,151
+        map.addMarker(new MarkerOptions().position(bauSouthCampus));
+        titleOfTheMarker = "BAU South Campus"; //in order to send it to CarParkDetailFragment when user clicks on the marker.
+
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(bauSouthCampus, zoomRatio));
+        map.setOnMarkerClickListener(this); //Set a listener for marker click and will be controlled on the onMarkerClick() method below.
     }
 
-    @Override
-    protected void onPause() {
-        mMapView.onPause();
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        mMapView.onDestroy();
-        super.onDestroy();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mMapView.onLowMemory();
-    }
-
-    public void moveToProfilePage(View v){
-        Intent i = new Intent(this,ProfilePage.class);
+    //=>The below methods is used for redirection to another page;
+    public void moveToProfilePage(View v) {
+        Intent i = new Intent(this, ProfilePage.class);
         startActivity(i);
     }
 
-    public void moveToCarParkDetail(View v){
+    /*public void moveToCarParkDetail(View v) {
         ConstraintLayout constraintView = findViewById(R.id.constraintLayoutMain);
         for (int i = 0; i < constraintView.getChildCount(); i++) {
             View childView = constraintView.getChildAt(i);
@@ -123,16 +105,44 @@ public class MainPage extends AppCompatActivity implements OnMapReadyCallback {
                 childView.setVisibility(View.GONE);
             }
         }
-        if(mMapView.getVisibility() == View.VISIBLE)
+        if (mMapView.getVisibility() == View.VISIBLE)
             mMapView.setVisibility(View.GONE);
 
         Fragment mFragment = new CarParkDetailFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.containerCarParkDetail, mFragment).commit();
     }
+    */
 
-    /**TODO: Su an icin 'Open CarPark Detail' butonu koyuldu ve bununla CarParkDetail sayfasi aciliyor fakat bu buton kaldirilacak.
-     * Cunku bu buton su anda yonlendirmede sorun var mi bunu gormek adina test icin eklendi. Asil yapilmasi planlanan MainPage'de harita
-     * uzerinden CarPark'i secip sonrasinda bu dogrultuda CarParkDetailFragment'i acmak (moveToCarParkDetail() metodundaki gibi) ve o carpark'taki
-     * musait park yerlerini rezezrvasyon yapabilmek veya navigasyon ile gidebilmek icin CarParkDetaiLFragment'ta daha kucuk bir harita uzerinde gostermek.
-     * */
+    public void moveToCarParkDetailFragment(double lat, double lon) {
+        ConstraintLayout constraintView = findViewById(R.id.constraintLayoutMain);
+        for (int i = 0; i < constraintView.getChildCount(); i++) {
+            View childView = constraintView.getChildAt(i);
+            if (!(childView instanceof FrameLayout)) {
+                childView.setVisibility(View.GONE);
+            }
+        }
+        if (mMapView.getVisibility() == View.VISIBLE)
+            mMapView.setVisibility(View.GONE);
+
+        //=>To send the lat-lon values of clicked mark on the map to the CarParkDetail fragment;
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putDouble("fetchedLat",lat);
+        bundle.putDouble("fetchedLon",lon);
+        bundle.putString("markerTitle",titleOfTheMarker);
+        CarParkDetailFragment fragment = new CarParkDetailFragment();
+        fragment.setArguments(bundle);
+        fragmentTransaction.replace(R.id.containerCarParkDetail, fragment).commit();
+    }
+
+    /** =>When user clicks on a marker, the user will be redirected to the CarParkDetailFragment page with the selected lat-lon values of the location
+        by sending it with bundle in the moveToCarParkDetailFragment() method.
+        Also, the user can see the car park location more zoomed after he/she redirected to the CarParkDetailFragment page.
+    */
+    @Override
+    public boolean onMarkerClick(@NonNull Marker marker) {
+        moveToCarParkDetailFragment(latBau,lonBau);
+        return false;
+    }
 }

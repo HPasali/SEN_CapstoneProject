@@ -21,25 +21,22 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import java.util.regex.Pattern;
+
+import helpers.RegexPatterns;
 import models.User;
 
 public class RegisterPage extends AppCompatActivity {
-    //---------Regex Patterns;------------------------
+    /* //---------Regex Patterns;------------------------
     private static final Pattern EMAIL_PATTERN = Pattern.compile("[a-z0-9]+@[a-z]+\\.[a-z]{2,3}"); //username@domain.com
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=])(?=\\S+$).{6,16}$"); //min 6 characters are needed to be saved on Firebase Db.
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=_-])(?=\\S+$).{6,16}$"); //min 6 characters are needed to be saved on Firebase Db.
     //'P@ssw1rd' =>Contains at least one uppercase letter (P), one lowercase letter (s), one digit (0), and one special character (@), Does not contain any whitespace characters and meets the length requirement
     // of 6 characters.
-    /*=>TODO: Password icin regex pattern duzenlenebilir/degistirilebilir. Ayrica ortak olarak bu static REGEXleri kullanidigin classlar icin bunlari tek bir classta toplayip kullanacagin yerlerde
-             instance olusturup kullanabilirsin.
-     */
-
     private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^\\+(?:[0-9]?){6,14}[0-9]$"); //+905555555555
     private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z\\s'-]+$"); //John Doe, O'Connor, Smith-Jones
     private static final Pattern SURNAME_PATTERN = Pattern.compile("^[A-Za-z\\s'-]+$"); //John Doe, O'Connor, Smith-Jones
     //-------------------------------------------
+    */
 
-    /**Firebase'den register esnasinda hatalar icin try-catch bloklari ile ekranda mesaj gosterecek kontroller de eklendi.
-       Ayni kontroller Login ekranlarina da eklenecek!!*/
 
     /**=>The registered users' email and password informations are added to the FirebaseAuth db and then the additional informations for the user which
     are their name, surname, phone number (with the created User object) are added to the RealTimeDb on the given reference url below after the authentication process is completed.
@@ -79,8 +76,8 @@ public class RegisterPage extends AppCompatActivity {
                 }*/
 
                 //=>If all inputs do not match with the specified Regex patterns, then Register operation should be cancelled;
-                if(!checkInputs(email,EMAIL_PATTERN) || !checkInputs(password, PASSWORD_PATTERN) || !checkInputs(name,NAME_PATTERN)
-                        || !checkInputs(surname, SURNAME_PATTERN) || !checkInputs(phoneNumber,PHONE_NUMBER_PATTERN))
+                if(!checkInputs(email,RegexPatterns.EMAIL_PATTERN) || !checkInputs(password,RegexPatterns.PASSWORD_PATTERN) || !checkInputs(name,RegexPatterns.NAME_PATTERN)
+                        || !checkInputs(surname, RegexPatterns.SURNAME_PATTERN) || !checkInputs(phoneNumber,RegexPatterns.PHONE_NUMBER_PATTERN))
                 {
                     System.out.println("------------------------------------");
                     System.out.println("Email: " + email + " - " + "Password: "+ password);

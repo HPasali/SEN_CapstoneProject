@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import activities.ProfilePage;
+import helpers.RegexPatterns;
+
 import com.example.capstoneproject_1.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -44,17 +46,16 @@ public class EditProfileFragment extends Fragment {
     private DatabaseReference reference;
     Map<String, Object> updatedFields = new HashMap<>();
 
-    //---------Regex Patterns;------------------------
+    /*//---------Regex Patterns;------------------------
     //private static final Pattern EMAIL_PATTERN = Pattern.compile("[a-z0-9]+@[a-z]+\\.[a-z]{2,3}"); //username@domain.com
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=])(?=\\S+$).{6,16}$"); //min 6 characters are needed to be saved on Firebase Db.
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=_-])(?=\\S+$).{6,16}$"); //min 6 characters are needed to be saved on Firebase Db.
     //'P@ssw1rd' =>Contains at least one uppercase letter (P), one lowercase letter (s), one digit (0), and one special character (@), Does not contain any whitespace characters and meets the
     // length requirement of 6 characters.
-    //=>TODO: Password icin regex pattern duzenlenebilir/degistirilebilir.
-
     private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^\\+(?:[0-9]?){6,14}[0-9]$"); //+905555555555
     private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z\\s'-]+$"); //John Doe, O'Connor, Smith-Jones
     private static final Pattern SURNAME_PATTERN = Pattern.compile("^[A-Za-z\\s'-]+$"); //John Doe, O'Connor, Smith-Jones
     //-------------------------------------------
+    */
 
     private String name;
     private String surname;
@@ -121,7 +122,7 @@ public class EditProfileFragment extends Fragment {
                 //=>If all inputs do not match with the specified Regex patterns, then Edit/Update The Profile operation should give warning messages;
                 //=>"!checkEditedInputs(txtEmail.getText().toString(),EMAIL_PATTERN)" removed from if condition since email should not be updated. It changed
                 //to TextView component on layout(xml) file. However, it can be seen on the page even it cannot be edited.
-                if(!checkEditedInputs(txtName.getText().toString(),NAME_PATTERN) || !checkEditedInputs(txtSurname.getText().toString(),SURNAME_PATTERN)
+                if(!checkEditedInputs(txtName.getText().toString(),RegexPatterns.NAME_PATTERN) || !checkEditedInputs(txtSurname.getText().toString(),RegexPatterns.SURNAME_PATTERN)
                         || !checkPassword(txtNewPassword.getText().toString()))
                 {
                     System.out.println("------------------------------------");
@@ -183,7 +184,7 @@ public class EditProfileFragment extends Fragment {
         //password can be sent null and will stay same(as previous password) then for this editing page;
         if(password.isEmpty())
             return true;
-        else if(PASSWORD_PATTERN.matcher(password).matches() == false){
+        else if(RegexPatterns.PASSWORD_PATTERN.matcher(password).matches() == false){
             Toast.makeText(getActivity(), "Please check the password by comparing with the hint text format!", Toast.LENGTH_SHORT).show();
             return false;
         }

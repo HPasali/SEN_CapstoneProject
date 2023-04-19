@@ -14,12 +14,15 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.regex.Pattern;
+
+import helpers.RegexPatterns;
 //import com.google.firebase.auth.FirebaseUser;
 
 public class LoginPage extends AppCompatActivity {
-    //---------Regex Patterns;------------------------
+    /* //---------Regex Patterns;------------------------
     private static final Pattern EMAIL_PATTERN = Pattern.compile("[a-z0-9]+@[a-z]+\\.[a-z]{2,3}"); //username@domain.com
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=])(?=\\S+$).{6,16}$"); //min 6 characters are needed to be saved on Firebase Db.
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=_-])(?=\\S+$).{6,16}$"); //min 6 characters are needed to be saved on Firebase Db.
+    */
 
     private FirebaseAuth mAuth =  FirebaseAuth.getInstance(); // Initialize Firebase Auth
     String userEmail = "";
@@ -72,7 +75,7 @@ public class LoginPage extends AppCompatActivity {
                 }*/
 
                 //=>If all inputs' formats do not match with the specified Regex patterns, then Login operation should fail;
-                if(!checkLoginInputs(email,EMAIL_PATTERN) || !checkLoginInputs(password, PASSWORD_PATTERN))
+                if(!checkLoginInputs(email,RegexPatterns.EMAIL_PATTERN) || !checkLoginInputs(password,RegexPatterns.PASSWORD_PATTERN))
                 {
                     System.out.println("------------------------------------");
                     System.out.println("Email: " + email);
@@ -92,7 +95,7 @@ public class LoginPage extends AppCompatActivity {
                                     startActivity(intent);
                                 } else {
                                     // If sign in fails, display a message to the user.
-                                    Toast.makeText(LoginPage.this, "Login failed.",
+                                    Toast.makeText(LoginPage.this, "Login failed, please check your login credentials!",
                                             Toast.LENGTH_SHORT).show();
                                 }
                             }
