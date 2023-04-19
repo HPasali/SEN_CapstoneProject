@@ -25,6 +25,17 @@ import fragments.CarParkDetailFragment;
 /** A new project and api-key is created on Google Cloud platform. Then this created api-key is given in local.properties in order to be able to fetch the map which is
  * provided by Google Maps. Then this map is placed onto the 'mapViewCarPark' "MapView" that is created on 'acitivity_main_page' layout file.
  *  */
+
+/*TODO:Asagidaki latBau-lonBau'dan farkli olarak lat-lon degerleri girilerek static olarak birden fazla lokasyon 'onMapReady()' metodunda kullanilarak map uzerinde
+    gosterilebilir veya asil planlanan yapiya gore 'Firebase RealtimeDb' uzerinde 'location' gibi bir alan(child) olusturup buna children olarak farkli lokasyonlarin
+    lat-lon-aktifParkYeriDurumu(true-false) gibi alanlarini ekleyecek sekilde olusturulacak Location(ornegin User class'i gibi 'models' package'i altinda) nesneleri
+    ayri ayri idler veya isimlerine gore eklenebilir (RealtimeDb'de 'users' altinda eklenen veriler/valuelar gibi).
+    Bu sekilde Firebase uzerinde location bilgileri ve bu loacationlardaki aktif park durumlari kullanicilarin yaptigi rezervasyona gore musait veya dolu olarak gosterilirse
+    'CarParkDetailFragment' sayfasindaki 'Available Charge Station'in karsiligi bos yer varsa 1, yoksa 0 olarak gosterilebilir ve bu degere gore 'MakeReservation' butonunun
+    clickable olmasi kontrol edilebilir (veya her turlu tiklanir ama rezervasyon icin park yeri secince eger dolu ise uyari mesaji verir).
+    => 'MakeReservation' butonuna tiklandiktan sonra acilan ReservationPage'de 3 slot icin secim yapilabilir gibi gosterilse de yalnizca 1 slot icin rezervasyon yapilabilecek
+    cunku 1 tane prototip uzerinde islem yapacagiz.
+*/
 public class MainPage extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private MapView mMapView;
     private double latBau = 41.04237536231388;

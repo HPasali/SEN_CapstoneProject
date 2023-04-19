@@ -42,11 +42,12 @@ public class ProfilePage extends AppCompatActivity {
     private TextView txtEmail;
     private TextView txtPhoneNumber;
 
-    /*TODO: Login olan kullanicinin bilgileri Firebase db'den profil sayfasina yansitiliyor fakat verilerin ilgili viewlere setlenmesi birkac sn aliyor, bu daha hizli veya async yapilabilir mi
+    /**=>Not:Login olan kullanicinin bilgileri Firebase db'den profil sayfasina yansitiliyor fakat verilerin ilgili viewlere setlenmesi birkac sn aliyor, bu daha hizli veya async yapilabilir mi
        diye bakilabilir. Su an icin duzenle ikonuna tiklaninca tetiklenen "moveToEditProfile()" metodunda email'in bos gelmesi, yani henuz db'den verilerin tam cekilememesi halinde kullaniciya
        bir uyari mesaji verilerek kontrol ediliyor ve veri cekilmezse duzenleme sayfasina gidilip yanlis bir veri guncellemesinin onune gecilmis oluyor. Email alani dolduktan sonra verilerin de
-       cekildigi soylenebileceginden, bu durumda ikona tekrar tiklaninca duzenle sayfasi aciliyor ve login olan kullaniciya ait veriler Firebase uzerinde guncellenip islem tamamlaninca
-       ProfilePage'detekrar gosteriliyor.*/
+       cekildigi soylenebileceginden, bu durumda ikona tekrar tiklaninca 'EditProfileFragment' sayfasi aciliyor ve login olan kullaniciya ait veriler duzenlenip Firebase uzerinde guncellenip islem
+       tamamlaninca ProfilePage'de tekrar gosteriliyor.*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

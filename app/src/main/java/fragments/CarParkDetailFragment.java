@@ -142,3 +142,8 @@ public class CarParkDetailFragment extends Fragment implements OnMapReadyCallbac
         mapView.onLowMemory();
     }
 }
+
+/** Note: Since navigation can directly be provided when the user clicks on a marker point on the map, the 'Navigation' button on the 'fragment_car_park_detail.xml'
+ * is removed(wrapped with comment block and the user is directly redirected to different app(Google Maps Navigation) to be able to see navigation after he/she clicks on
+ * the marker point on the map.
+ * */
