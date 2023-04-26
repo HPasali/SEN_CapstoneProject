@@ -32,11 +32,6 @@ public class ProfilePage extends AppCompatActivity {
    private String uId = "";
    private DatabaseReference reference; //FirebaseDatabase.getInstance().getReference().child("users").child();
 
-   /*private String name;
-   private String surname;
-   private String email;
-   private String phoneNumber;*/
-
     private TextView txtName;
     private TextView txtSurname;
     private TextView txtEmail;
@@ -93,8 +88,6 @@ public class ProfilePage extends AppCompatActivity {
             return;
         }
 
-        /*Button button = (Button)findViewById(R.id.button3);
-        button.setVisibility(View.INVISIBLE);*/
         // Get the root view of your activity
         ConstraintLayout constraintView = findViewById(R.id.constraintProfile);
         for (int i = 0; i < constraintView.getChildCount(); i++) {

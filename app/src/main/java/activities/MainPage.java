@@ -105,20 +105,10 @@ public class MainPage extends AppCompatActivity implements OnMapReadyCallback, G
 
     @Override
     public void onMapReady(GoogleMap map) {
-        /* Add a marker in BAU South Campus and move the camera;
-        LatLng bauSouthCampus = new LatLng(latBau, lonBau); //-34,151
-        map.addMarker(new MarkerOptions().position(bauSouthCampus));
-        titleOfTheMarker = "BAU South Campus"; //in order to send it to CarParkDetailFragment when user clicks on the marker.
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(bauSouthCampus, zoomRatio));
-        map.setOnMarkerClickListener(this); //Set a listener for marker click and will be controlled on the onMarkerClick() method below.*/
+        //Add a marker in BAU South Campus and move the camera;
+        //'.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))' can be given with MarkerOptions() to define a color for the marker.
 
         /**=>Fetched location datas from Firebase RealtimeDb are assigned to the variables with the usage of getLocationDatas() method which is created below;*/
-        /*bauSouthCampus = getLocationData(1); //the location data will be fetched from db according to the sent title which is unique on the db as id.
-        homeLocation = getLocationData(2);
-        map.addMarker(new MarkerOptions().position(bauSouthCampus).title("BAU South Campus"));
-        //'.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))' can be given with MarkerOptions() to define a color for the marker.
-        map.addMarker(new MarkerOptions().position(homeLocation).title("Home"));*/
-
         getLocationDatas(map); //to get the locations from Realtime Db.
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(bauSouthCampus, zoomRatio)); //as default zoomed marker on Bau South Campus
         map.setOnMarkerClickListener(this); //Set a listener for marker click and will be controlled on the onMarkerClick() method below.
@@ -129,22 +119,6 @@ public class MainPage extends AppCompatActivity implements OnMapReadyCallback, G
         Intent i = new Intent(this, ProfilePage.class);
         startActivity(i);
     }
-
-    /*public void moveToCarParkDetail(View v) {
-        ConstraintLayout constraintView = findViewById(R.id.constraintLayoutMain);
-        for (int i = 0; i < constraintView.getChildCount(); i++) {
-            View childView = constraintView.getChildAt(i);
-            if (!(childView instanceof FrameLayout)) {
-                childView.setVisibility(View.GONE);
-            }
-        }
-        if (mMapView.getVisibility() == View.VISIBLE)
-            mMapView.setVisibility(View.GONE);
-
-        Fragment mFragment = new CarParkDetailFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.containerCarParkDetail, mFragment).commit();
-    }
-    */
 
     public void moveToCarParkDetailFragment(double lat, double lon,String title) {
         //=>To remove the current views on the activity page and show the fragment's views on the page;
@@ -165,7 +139,6 @@ public class MainPage extends AppCompatActivity implements OnMapReadyCallback, G
         bundle.putDouble("fetchedLat",lat);
         bundle.putDouble("fetchedLon",lon);
         bundle.putString("markerTitle",title);
-        //bundle.putBoolean("carParkAvailability",hasAvailableLot);
         CarParkDetailFragment fragment = new CarParkDetailFragment();
         fragment.setArguments(bundle);
         fragmentTransaction.replace(R.id.containerCarParkDetail, fragment).commit();
@@ -175,40 +148,12 @@ public class MainPage extends AppCompatActivity implements OnMapReadyCallback, G
         by sending it with bundle in the moveToCarParkDetailFragment() method. Since the markers are added to map object, the 'setOnMarkerClickListener()'
         method listens which marker is clicked dynamically and this marker's lat-lon and title datas can be fetched with 'marker.getPosition()' and 'marker.getTitle()'
         as below.
-        =>*The availability of the selected car park is sent to the 'CarParkDetailFragment' to show it on the 'Available Charge Station' field as 0 or 1 with the usage of
-        fetched data from the RealtimeDb field 'isAvailable' via reaching it on snippet as 'Boolean.parseBoolean(marker.getSnippet())'.
-        => Moreover, the user can see the car park location more zoomed after he/she redirected to the CarParkDetailFragment page.
-    */
+        => Moreover, the user can see the car park location more zoomed after he/she redirected to the CarParkDetailFragment page.*/
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
-        //moveToCarParkDetailFragment(latBau,lonBau);
-        moveToCarParkDetailFragment(marker.getPosition().latitude,marker.getPosition().longitude,marker.getTitle()); //, Boolean.parseBoolean(marker.getSnippet()));
+        moveToCarParkDetailFragment(marker.getPosition().latitude,marker.getPosition().longitude,marker.getTitle());
         return false;
     }
-
-    //=>To get and return the location(lat-lon) data from Firebase according to the stored title (as id);
-    /*public LatLng getLocationData(int locationId){
-        reference = FirebaseDatabase.getInstance().getReference().child("locations"); //to define where is the location of stored datas on Firebase.
-        //reference = reference.child("locations").child(title);
-        reference = reference.child(String.valueOf(locationId)); //FirebaseDatabase.getInstance().getReference().child("locations").child(title) => title will be BAU South Campus or Home.
-        System.out.println("-------------------ONUR--------------------");
-        System.out.println(reference);
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                latData = snapshot.child("lat").getValue(Double.class);
-                lonData = snapshot.child("lon").getValue(Double.class);
-                //System.out.println(latData);
-                //System.out.println(lonData);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-        //System.out.println(latData);
-        //System.out.println(lonData);
-        return new LatLng(latData,lonData);
-    }*/
 
     //=>To get and return the location(lat-lon) datas from Firebase;
     public void getLocationDatas(GoogleMap map){
@@ -220,11 +165,10 @@ public class MainPage extends AppCompatActivity implements OnMapReadyCallback, G
                 for (DataSnapshot locSnapshot : snapshot.getChildren()) {
                     double latitude = locSnapshot.child("lat").getValue(Double.class);
                     double longitude = locSnapshot.child("lon").getValue(Double.class);
-                    //Add markers for each location on the map.
+                    //Add markers for each location on the map;
                     LatLng location = new LatLng(latitude, longitude);
                     MarkerOptions markerOptions = new MarkerOptions().position(location);
                     markerOptions.title(locSnapshot.child("title").getValue().toString());
-                    //markerOptions.snippet(locSnapshot.child("isAvailable").getValue().toString()); //snippet is used to store specific type of data on the marker.
                     map.addMarker(markerOptions);
                 }
             }

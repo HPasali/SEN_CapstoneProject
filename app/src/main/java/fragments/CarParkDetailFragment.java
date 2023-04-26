@@ -56,13 +56,6 @@ public class CarParkDetailFragment extends Fragment implements OnMapReadyCallbac
     private TextView txtCarParkAvailability;
     private DatabaseReference reference;
 
-    /*private static final String ARG_FETCHEDLATVALUE = "latValue";
-    private static final String ARG_FETCHEDLONVALUE = "lonValue";
-    //------------------------------------
-    //=>lat-lon values which is sent from the Main Page when the user clicks on a marker on the map;
-    private double fetchedLatValue = 0.0;
-    private double fetchedLonValue = 0.0;*/
-
     public CarParkDetailFragment() {
         // Required empty public constructor
     }
@@ -72,8 +65,6 @@ public class CarParkDetailFragment extends Fragment implements OnMapReadyCallbac
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
-        /*args.putDouble(ARG_FETCHEDLATVALUE,lat);
-        args.putDouble(ARG_FETCHEDLONVALUE,lon);*/
         fragment.setArguments(args);
         return fragment;
     }
@@ -170,9 +161,7 @@ public class CarParkDetailFragment extends Fragment implements OnMapReadyCallbac
     public void onMapReady(@NonNull GoogleMap googleMap) {
         /*=>Add a marker in selected Car Park and move the camera by giving it's lat-lon values and title with the sent datas on bundle
             from the MainPage.java when the user clicks on a marker on the Main Page;*/
-        //LatLng markerLocation = new LatLng(41.04237536231388, 29.009312741127506);
         LatLng markerLocation = new LatLng(this.getArguments().getDouble("fetchedLat"), this.getArguments().getDouble("fetchedLon"));
-        //googleMap.addMarker(new MarkerOptions().position(markerLocation).title("Marker in Car Park"));
         googleMap.addMarker(new MarkerOptions().position(markerLocation).title(this.getArguments().getString("markerTitle")));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerLocation,zoomRatio));
         map=googleMap;

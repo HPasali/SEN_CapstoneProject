@@ -21,13 +21,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import java.util.regex.Pattern;
-
 import helpers.RegexPatterns;
 import models.User;
 
 //TODO:Proje yeni bir Firebase db'sine baglandiginda bu projenin package'ini Firebase'de tanimlamak ve
 // "getReferenceFromUrl("https://capstoneprojectdemo1-5706a-default-rtdb.firebaseio.com/");" kullanilan yerlerdeki urlleri yeni RealtimeDb'nin url'i ile degismek gerekecek!!!
-
 
 public class RegisterPage extends AppCompatActivity {
     /* //---------Regex Patterns;------------------------
@@ -70,13 +68,6 @@ public class RegisterPage extends AppCompatActivity {
                 final String name = nameOfUser.getText().toString();
                 final String surname = surnameOfUser.getText().toString();
                 final String phoneNumber = phoneNumberOfUser.getText().toString();
-
-                /*if (email.isEmpty() || password.isEmpty()) {
-                    System.out.println(email);
-                    System.out.println(password);
-                    Toast.makeText(RegisterPage.this, "Please enter your email and password", Toast.LENGTH_SHORT).show();
-                    return;
-                }*/
 
                 //=>If all inputs do not match with the specified Regex patterns, then Register operation should be cancelled;
                 if(!checkInputs(email,RegexPatterns.EMAIL_PATTERN) || !checkInputs(password,RegexPatterns.PASSWORD_PATTERN) || !checkInputs(name,RegexPatterns.NAME_PATTERN)
