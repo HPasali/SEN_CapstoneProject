@@ -25,6 +25,10 @@ import java.util.regex.Pattern;
 import helpers.RegexPatterns;
 import models.User;
 
+//TODO:Proje yeni bir Firebase db'sine baglandiginda bu projenin package'ini Firebase'de tanimlamak ve
+// "getReferenceFromUrl("https://capstoneprojectdemo1-5706a-default-rtdb.firebaseio.com/");" kullanilan yerlerdeki urlleri yeni RealtimeDb'nin url'i ile degismek gerekecek!!!
+
+
 public class RegisterPage extends AppCompatActivity {
     /* //---------Regex Patterns;------------------------
     private static final Pattern EMAIL_PATTERN = Pattern.compile("[a-z0-9]+@[a-z]+\\.[a-z]{2,3}"); //username@domain.com
@@ -36,7 +40,6 @@ public class RegisterPage extends AppCompatActivity {
     private static final Pattern SURNAME_PATTERN = Pattern.compile("^[A-Za-z\\s'-]+$"); //John Doe, O'Connor, Smith-Jones
     //-------------------------------------------
     */
-
 
     /**=>The registered users' email and password informations are added to the FirebaseAuth db and then the additional informations for the user which
     are their name, surname, phone number (with the created User object) are added to the RealTimeDb on the given reference url below after the authentication process is completed.

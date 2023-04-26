@@ -36,7 +36,6 @@
         android:layout_width="127dp"
         android:layout_height="52dp"
         android:layout_marginTop="420dp"
-        android:onClick="redirectToProfilePage"
         android:text="APPLY"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
