@@ -98,8 +98,6 @@ public class ReservationPage extends AppCompatActivity {
     private void makeReservation(){
         //=>Save the new reservation of logged in user to Firebase Realtime Database;
         HashMap<String, Object> reservationInfo = new HashMap<>();
-        /*??=>Reservation date'i ServerValue uzerinden Firebase'e kaydettiginde Unix formatinda miliseconds ile kaydediyor ve bu tekrar kiyaslanabilse de localdeki guncel
-               zamana gore mi yoksa buna gore mi kaydededildigi tekrar incelenebilir!! */
         reservationInfo.put("userId",uId);
         reservationInfo.put("reservationDate", ServerValue.TIMESTAMP); //current timestamp by the Firebase Database servers.
         reservationInfo.put("reservedCarPark", selectedCarPark);
@@ -184,6 +182,6 @@ public class ReservationPage extends AppCompatActivity {
 }
 
 //TODO: Kullanicinin ProfilePage'de yarim saat gectikten sonra rezervasyonunun dusmesi, 'Open' butonuna basmasi veya 'Cancel Reservation' butonuna basmasi halinde aktif
-// rezervasyonu 'PASSIVE' olarak guncellenecek ve en son rezervasyon yapilan car park'in isAvailable degeri true olarak guncellenip tekrar rezervasyon yapilabilmesine olanak
+// rezervasyonu 'PASSIVvE' olarak guncellenecek ve en son rezervasyon yapilan car park'in isAvailable degeri true olarak guncellenip tekrar rezerasyon yapilabilmesine olanak
 // taninacak.
 //TODO:ProfilePage'de login olan kullaniciya ait aktif rezervasyon varsa buna ait bilgiler gosterilecek. Aksi halde 'su anda aktif rezervasyonunuz yoktur denebilir'.

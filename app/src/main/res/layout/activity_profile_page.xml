@@ -32,9 +32,9 @@
 
     <TextView
         android:id="@+id/txtSelectedCarParkName"
-        android:layout_width="68dp"
+        android:layout_width="wrap_content"
         android:layout_height="21dp"
-        android:layout_marginStart="70dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="40dp"
         android:text="X"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,11 +42,25 @@
         app:layout_constraintStart_toEndOf="@+id/txtNameOfCarPark"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!--<TextView
+        android:id="@+id/txtInfoMessage"
+        android:layout_width="296dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="76dp"
+        android:layout_marginLeft="20dp"
+        android:text="You do not have an active reservation yet..."
+        android:textStyle="bold"
+        android:textSize="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.571"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />-->
+
     <TextView
         android:id="@+id/txtSelectedChargeStation"
-        android:layout_width="69dp"
+        android:layout_width="wrap_content"
         android:layout_height="19dp"
-        android:layout_marginStart="80dp"
+        android:layout_marginStart="35dp"
         android:layout_marginTop="16dp"
         android:text="1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -56,9 +70,9 @@
 
     <TextView
         android:id="@+id/txtDuration"
-        android:layout_width="70dp"
+        android:layout_width="wrap_content"
         android:layout_height="22dp"
-        android:layout_marginStart="180dp"
+        android:layout_marginStart="140dp"
         android:layout_marginTop="20dp"
         android:text="X"
         app:layout_constraintEnd_toEndOf="parent"
@@ -214,19 +228,19 @@
         app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/btnOpenLock"
         android:layout_width="99dp"
         android:layout_height="40dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="160dp"
         android:text="Open Lock"
-        app:layout_constraintEnd_toStartOf="@+id/button4"
+        app:layout_constraintEnd_toStartOf="@+id/btnCancelReservation"
         app:layout_constraintHorizontal_bias="0.298"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/btnCancelReservation"
         android:layout_width="175dp"
         android:layout_height="40dp"
         android:layout_marginTop="160dp"
@@ -237,13 +251,40 @@
 
     <FrameLayout
         android:id="@+id/container_edit"
-        android:layout_width="396dp"
-        android:layout_height="712dp"
+        android:layout_width="399dp"
+        android:layout_height="717dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.473"></FrameLayout>
+        app:layout_constraintVertical_bias="0.285"></FrameLayout>
+
+    <TextView
+        android:id="@+id/txtWarningMessage"
+        android:layout_width="323dp"
+        android:layout_height="49dp"
+        android:gravity="center"
+        android:text="WARNING: Reservation will be cancelled after 30 minutes automatically!"
+        android:textAlignment="center"
+        android:textSize="15dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.659"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.821" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="32dp"
+        android:layout_height="35dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/txtWarningMessage"
+        app:layout_constraintHorizontal_bias="0.538"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.804"
+        app:srcCompat="@android:drawable/stat_sys_warning" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
