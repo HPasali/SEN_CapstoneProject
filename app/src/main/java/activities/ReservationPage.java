@@ -35,7 +35,7 @@ public class ReservationPage extends AppCompatActivity {
     private  FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private String uId = "";
-    DatabaseReference reference; //FirebaseDatabase.getInstance().getReferenceFromUrl("https://capstoneprojectdemo1-5706a-default-rtdb.firebaseio.com/");
+    DatabaseReference reference; //FirebaseDatabase.getInstance().getReferenceFromUrl("https://capstoneprojectdemo2-default-rtdb.firebaseio.com/);
     String selectedCarPark = "";
     //boolean activeFlag = false;
 

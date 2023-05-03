@@ -286,7 +286,7 @@ public class ProfilePage extends AppCompatActivity {
     private void updateCarParkAvailability(String carPark){
         DatabaseReference refLoc = FirebaseDatabase.getInstance().getReference().child("locations");
         Query queryLocations = refLoc.orderByChild("title").equalTo(carPark);
-        queryLocations.addListenerForSingleValueEvent(new ValueEventListener() {
+        queryLocations.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {

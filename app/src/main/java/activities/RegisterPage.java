@@ -44,7 +44,7 @@ public class RegisterPage extends AppCompatActivity {
     With this usage, all of the given registration informations can be added to the related parts of Firebase which are FirebaseAuthentication and RealtimeDatabase.*/
 
     FirebaseAuth mAuth; // = FirebaseAuth.getInstance();
-    DatabaseReference ref = FirebaseDatabase.getInstance().getReferenceFromUrl("https://capstoneprojectdemo1-5706a-default-rtdb.firebaseio.com/");
+    DatabaseReference ref = FirebaseDatabase.getInstance().getReferenceFromUrl("https://capstoneprojectdemo2-default-rtdb.firebaseio.com/");
     User newUser;
 
     @Override
