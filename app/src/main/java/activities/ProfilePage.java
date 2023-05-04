@@ -23,8 +23,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import fragments.EditProfileFragment;
@@ -119,7 +122,11 @@ public class ProfilePage extends AppCompatActivity {
         });
 
         //*****----1
-        checkDurationOfReservation();
+        try {
+            checkDurationOfReservation();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         //=>uId'nin atanmasi sonrasinda cagrilmasi gerekli cunku reference icin login olan kullanicinin id'si kullaniliyor;
         showActiveReservation();//**
@@ -129,7 +136,7 @@ public class ProfilePage extends AppCompatActivity {
     private void showActiveReservation(){
        DatabaseReference refReservation = FirebaseDatabase.getInstance().getReference().child("reservations");
        Query queryRes = refReservation.orderByChild("userId").equalTo(uId);
-        queryRes.addListenerForSingleValueEvent(new ValueEventListener() {
+       queryRes.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean hasActiveReservation = false;
@@ -163,26 +170,31 @@ public class ProfilePage extends AppCompatActivity {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            if (rsvDate != null) {
+                            try {
+                                if (rsvDate != null) {
                                 /*=>'isReservationCompleted' true ise aktif rezervasyon tamamlanmis/iptal edilmis(statusu 'PASSIVE' olarak guncellenmis) demektir ve bu sebeple
                                     Handler'in calismasi durdurulup ProfilePage activity'si (sayfasi) yeniden cagrilabilir.*/
-                                if(isReservationCompleted){
-                                   handler.removeCallbacksAndMessages(null);
-                                   recreate(); /*Aktif rezervasyonun statusu PASSIVE olarak guncellendikten sonra artik Handler ile zaman artisini saglayacak guncellemenin onune
+                                    if (isReservationCompleted) {
+                                        handler.removeCallbacksAndMessages(null);
+                                        recreate(); /*Aktif rezervasyonun statusu PASSIVE olarak guncellendikten sonra artik Handler ile zaman artisini saglayacak guncellemenin onune
                                    gecmek ve sayfayi yeniden baslatmak adina sayfayi yeniden tetikleyen ve sirasiyla onDestroy() ve onCreate() metotlarini cagiran 'recreate()'
                                    metodu cagrilabilir ve return ile tamamen yeni sayfa acilip bu fonksiyondan cikilabilir.*/
-                                   return;
+                                        return;
+                                    }
+                                    // Convert the server timestamp value to a Date object
+                                    Date reservationDate = new Date((Long) rsvDate);
+                                    // Calculate the time difference between reservationDate and the current time
+                                    long currentTime = System.currentTimeMillis();
+                                    long timeDiffMillis = currentTime - reservationDate.getTime();
+                                    // Format the time difference as a string and set it to the TextView
+                                    txtDuration.setText(formatDuration(timeDiffMillis));
+                                    checkDurationOfReservation(); //*****----2 - If the current duration reaches to 30 minutes for the active reservation, then it will be cancelled!
                                 }
-                                // Convert the server timestamp value to a Date object
-                                Date reservationDate = new Date((Long) rsvDate);
-                                // Calculate the time difference between reservationDate and the current time
-                                long currentTime = System.currentTimeMillis();
-                                long timeDiffMillis = currentTime - reservationDate.getTime();
-                                // Format the time difference as a string and set it to the TextView
-                                txtDuration.setText(formatDuration(timeDiffMillis));
-                                checkDurationOfReservation(); //*****----2 - If the current duration reaches to 30 minutes for the active reservation, then it will be cancelled!
+                                handler.postDelayed(this, 1000); // Update the TextView every second
                             }
-                            handler.postDelayed(this, 1000); // Update the TextView every second
+                            catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
                     //=>Aktif rezervasyon olmadiginda INVISIBLE olan butonlar VISIBLE hale getirilir ve ekranda gorunur olacak sekilde guncellenir;
@@ -276,9 +288,22 @@ public class ProfilePage extends AppCompatActivity {
 
     /*=>Duration of logined user's active reservation is checked and if it reach to 30 minutes, then it will be cancelled and it's status will be updated as 'PASSIVE'
         on the database. */
-    private void checkDurationOfReservation(){
-        if(txtDuration.getText().toString().equals("30:00")){
-            completeReservation(); //this method will update the status of active reservation as 'PASSIVE' to complete or cancel it.return;
+    //=>Arka planda 30 dakikayi gecmesi ve ProfilePage acilinca bu rezervasyonun dusmesinin gereklililigini de goz onunde bulundurarak 30 dakika veya daha uzun bir sure
+    //gecmisse aktif rezervasyonun tamamlanmasi/iptali saglanacak;
+    private void checkDurationOfReservation() throws ParseException {
+        /*if(txtDuration.getText().toString().equals("30:00")){
+            completeReservation(); //this method will update the status of active reservation as 'PASSIVE' to complete or cancel it.
+            // return;
+        }*/
+        //--------------------------------------------------------------------------------------
+        String duration = txtDuration.getText().toString();
+        SimpleDateFormat format = new SimpleDateFormat("mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date durationTime = format.parse(duration); //converts duration to a Date object
+        Date thirtyMin = format.parse("30:00"); //the TextView's value will be compared with this value (30 minutes).
+        if (durationTime.compareTo(thirtyMin) >= 0) {
+            // The value of the TextView is greater than or equal to "30:00".
+            completeReservation(); //this method will update the status of active reservation as 'PASSIVE' to complete or cancel it.
         }
     }
 
@@ -286,7 +311,7 @@ public class ProfilePage extends AppCompatActivity {
     private void updateCarParkAvailability(String carPark){
         DatabaseReference refLoc = FirebaseDatabase.getInstance().getReference().child("locations");
         Query queryLocations = refLoc.orderByChild("title").equalTo(carPark);
-        queryLocations.addValueEventListener(new ValueEventListener() {
+        queryLocations.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {

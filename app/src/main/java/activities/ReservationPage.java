@@ -113,7 +113,7 @@ public class ReservationPage extends AppCompatActivity {
                     // Write succeeded
                     Toast.makeText(ReservationPage.this, "Your reservation is saved successfully.",
                             Toast.LENGTH_SHORT).show();
-                    updateTheAvailability(); //to update the isAvailabile value of selected car park after making a reservation.
+                    updateTheAvailability(); //to update the isAvailable value of selected car park after making a reservation.
                 } else {
                     // Write failed
                     Toast.makeText(ReservationPage.this, "An error occured while reservation is added!",
@@ -159,6 +159,7 @@ public class ReservationPage extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String id = snapshot.getKey();
                     DatabaseReference idRef = refLocations.child(id);
+
                     idRef.child("isAvailable").setValue(false, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
@@ -181,7 +182,9 @@ public class ReservationPage extends AppCompatActivity {
     }
 }
 
-//TODO: Kullanicinin ProfilePage'de yarim saat gectikten sonra rezervasyonunun dusmesi, 'Open' butonuna basmasi veya 'Cancel Reservation' butonuna basmasi halinde aktif
-// rezervasyonu 'PASSIVvE' olarak guncellenecek ve en son rezervasyon yapilan car park'in isAvailable degeri true olarak guncellenip tekrar rezerasyon yapilabilmesine olanak
-// taninacak.
-//TODO:ProfilePage'de login olan kullaniciya ait aktif rezervasyon varsa buna ait bilgiler gosterilecek. Aksi halde 'su anda aktif rezervasyonunuz yoktur denebilir'.
+//=>OLD TO-DOs;
+//**Kullanicinin ProfilePage'de yarim saat gectikten sonra rezervasyonunun dusmesi, 'Open' butonuna basmasi veya 'Cancel Reservation' butonuna basmasi halinde aktif
+// rezervasyonu 'PASSIVvE' olarak guncellenmesi ve en son rezervasyon yapilan car park'in isAvailable degeri true olarak guncellenip tekrar rezerasyon yapilabilmesine olanak
+// taninmasi saglandi.
+//**ProfilePage'de login olan kullaniciya ait aktif rezervasyon varsa buna ait bilgiler gosteriliyor. Aksi halde varsayilan degerler gosteriliyor ve kilit acma (Open) ve
+// rezervasyon iptali (Cancel Reservation) butonlari deaktive ediliyor.

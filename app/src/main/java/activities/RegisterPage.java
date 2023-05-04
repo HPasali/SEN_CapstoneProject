@@ -1,5 +1,4 @@
 package activities;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +23,7 @@ import java.util.regex.Pattern;
 import helpers.RegexPatterns;
 import models.User;
 
-//TODO:Proje yeni bir Firebase db'sine baglandiginda bu projenin package'ini Firebase'de tanimlamak ve
+//**Proje yeni bir Firebase db'sine baglandiginda bu projenin package'ini Firebase'de tanimlamak ve
 // "getReferenceFromUrl("https://capstoneprojectdemo1-5706a-default-rtdb.firebaseio.com/");" kullanilan yerlerdeki urlleri yeni RealtimeDb'nin url'i ile degismek gerekecek!!!
 
 public class RegisterPage extends AppCompatActivity {
