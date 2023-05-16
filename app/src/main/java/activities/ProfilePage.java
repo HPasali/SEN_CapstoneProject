@@ -31,6 +31,7 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import fragments.EditProfileFragment;
+import models.ArduinoConnection;
 
 public class ProfilePage extends AppCompatActivity {
 
@@ -269,6 +270,12 @@ public class ProfilePage extends AppCompatActivity {
                                 if (error == null) {
                                     Toast.makeText(ProfilePage.this, "Reservation is completed/cancelled!", Toast.LENGTH_SHORT).show();
                                     updateCarParkAvailability(snapshot.child("reservedCarPark").getValue(String.class));
+                                    //--------------------------------------------------------
+                                    //TODO:Arduino Connection-Open The Lock System;
+                                    /*=>The below method is called after the reservation is applied successfully in order to trigger the servo motor on the NodeMCU
+                                       which will close the lock system that is connected to it;*/
+                                       ArduinoConnection.sendCommand("/Lock=ON");
+                                    //--------------------------------------------------------
                                 } else {
                                     Toast.makeText(ProfilePage.this, "Reservation cannot be completed/cancelled!", Toast.LENGTH_SHORT).show();
                                 }
@@ -347,4 +354,11 @@ public class ProfilePage extends AppCompatActivity {
  * => 'completeReservation()' metodunun icerisinde ayrica 'updateCarParkAvailability()' metodu cagrilarak aktif rezervasyonun bulundugu car park'in statusu de rezervasyon
  *    tamamlandigi/iptal edildigi icin musait olarak ('isAvailable:true') guncellenir. *
  * */
+
+//TODO: 'Open' butonuna tiklanildiginda kilit acilsa da 'isAvailable' kolonunun true olarak guncellenmemesi daha dogru olur. Kullanici aracini sarj ettiginde bu alanin musait
+// olarak gozukmemesi gerektiginden buna ait bir kontrol eklenecek veya 'Open' butonu yalnizca kilidi acacak, isAvailability alanini guncellemeyecek. 'Complete Reservation' gibi
+// farkli bir metot eklenip kullanici islemini bitirince bu butona tikladiginda rezervasyon tamamlanip 'isAvailable' alani true olarak guncellenip car park musait hale getirilebilir.
+
+//TODO: Kullanici profil sayfasini actiginda yarim saat gecmesi halinde rezervasyonu iptal etme durumunu otomatik bir hale getirip job kontrolu gibi kullanicinin ProfilePage'i tekrar
+//  manuel olarak acmasina gerek olmadan iptal edilebilmesi dusunulebilir.
 

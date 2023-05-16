@@ -29,6 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.security.Timestamp;
 import java.util.HashMap;
 
+import models.ArduinoConnection;
 import models.User;
 
 public class ReservationPage extends AppCompatActivity {
@@ -114,6 +115,12 @@ public class ReservationPage extends AppCompatActivity {
                     Toast.makeText(ReservationPage.this, "Your reservation is saved successfully.",
                             Toast.LENGTH_SHORT).show();
                     updateTheAvailability(); //to update the isAvailable value of selected car park after making a reservation.
+                    //--------------------------------------------------------
+                    //TODO:Arduino Connection-Close The Lock System;
+                    /*=>The below method is called after the reservation is applied successfully in order to trigger the servo motor on the NodeMCU
+                        which will close the lock system that is connected to it;*/
+                     ArduinoConnection.sendCommand("/Lock=OFF");
+                    //--------------------------------------------------------
                 } else {
                     // Write failed
                     Toast.makeText(ReservationPage.this, "An error occured while reservation is added!",
