@@ -116,7 +116,7 @@ public class ReservationPage extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                     updateTheAvailability(); //to update the isAvailable value of selected car park after making a reservation.
                     //--------------------------------------------------------
-                    //TODO:Arduino Connection-Close The Lock System;
+                    //=>Arduino Connection-Close The Lock System;
                     /*=>The below method is called after the reservation is applied successfully in order to trigger the servo motor on the NodeMCU
                         which will close the lock system that is connected to it;*/
                      ArduinoConnection.sendCommand("/Lock=OFF");

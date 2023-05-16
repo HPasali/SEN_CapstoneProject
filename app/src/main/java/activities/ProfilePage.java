@@ -271,7 +271,7 @@ public class ProfilePage extends AppCompatActivity {
                                     Toast.makeText(ProfilePage.this, "Reservation is completed/cancelled!", Toast.LENGTH_SHORT).show();
                                     updateCarParkAvailability(snapshot.child("reservedCarPark").getValue(String.class));
                                     //--------------------------------------------------------
-                                    //TODO:Arduino Connection-Open The Lock System;
+                                    //=>Arduino Connection-Open The Lock System;
                                     /*=>The below method is called after the reservation is applied successfully in order to trigger the servo motor on the NodeMCU
                                        which will close the lock system that is connected to it;*/
                                        ArduinoConnection.sendCommand("/Lock=ON");
