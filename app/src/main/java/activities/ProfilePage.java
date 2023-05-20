@@ -45,6 +45,7 @@ public class ProfilePage extends AppCompatActivity {
 
     private Button btnOpenLock;
     private Button btnCancelReservation;
+    private Button btnTerminateReservation; //=>New *==>
 
     private TextView txtCarParkName;
     private TextView txtDuration;
@@ -54,9 +55,14 @@ public class ProfilePage extends AppCompatActivity {
     private TextView txtEmail;
     private TextView txtPhoneNumber;
 
+    private TextView lblReservationInfo; //=>new *=> (to change the label of this view if the reservation is in 'ARRIVED' status).
+
     /**=>'completeReservation()' metodunun cagrilmasi halinde 'isReservationCompleted' degiskeni true olarak atanir ve Handler gibi tekrar eden operasyonlarin sonlandirilmasinda
      * ve sayfanin yeniden/sifirdan cagrilmasinda (aktif rezervasyon sonlandirildigi veya iptal edildigi icin) kullanilir.*/
     private boolean isReservationCompleted = false;
+
+    //=>Check whether the user is arrived for the reservation or not and control the buttons visibility accordingly;
+    private boolean isUserArrived = false;
 
     /**=>Not:Login olan kullanicinin bilgileri Firebase db'den profil sayfasina yansitiliyor fakat verilerin ilgili viewlere setlenmesi birkac sn aliyor, bu daha hizli veya async yapilabilir mi
        diye bakilabilir. Su an icin duzenle ikonuna tiklaninca tetiklenen "moveToEditProfile()" metodunda email'in bos gelmesi, yani henuz db'den verilerin tam cekilememesi halinde kullaniciya
@@ -73,8 +79,11 @@ public class ProfilePage extends AppCompatActivity {
         txtDuration = findViewById(R.id.txtDuration);
         btnOpenLock = findViewById(R.id.btnOpenLock);
         btnCancelReservation = findViewById(R.id.btnCancelReservation);
+        btnTerminateReservation = findViewById(R.id.btnCompleteReservation);
         btnOpenLock.setVisibility(View.INVISIBLE);
         btnCancelReservation.setVisibility(View.INVISIBLE);
+        btnTerminateReservation.setVisibility(View.INVISIBLE); //=>New *==>
+        lblReservationInfo = findViewById(R.id.lblActiveReservationInfo); //=>New *==>
 
         txtName = findViewById(R.id.txtProfileName);
         txtSurname = findViewById(R.id.txtProfileSurname);
@@ -111,7 +120,8 @@ public class ProfilePage extends AppCompatActivity {
         btnOpenLock.setOnClickListener(new View.OnClickListener() {  //*****----3
             @Override
             public void onClick(View view) {
-                completeReservation();
+                //completeReservation();
+                arrivedForReservation(); //=>New *==>
             }
         });
 
@@ -119,6 +129,25 @@ public class ProfilePage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 completeReservation();
+            }
+        });
+
+        //=>'Complete Reservation' butonuna tiklandiginda asagidaki metot tetiklenmektedir;
+        btnTerminateReservation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                completeReservation();
+                //=>'showReservationOfUser()' metodu icerisindeki Handler, calismayi 'Open Lock'a basildiginda zaten durdurdugu icin ' completeReservation()' icerisindeki
+                // 'isReservationCompleted=true' kontrolu, ARRIVED statuler uzerinden rezervasyon kapatilirken gecerli olmuyor (or ile if kosuluna eklenmis olsa da).
+                // Bu sebeple burada ayrica sayfa yenileniyor ve PASSIVE statude olan rezervasyonlar oldugundan sayfa acildiginda onCreate icerisindeki default
+                // degerler (buton gorunurlukleri de dahil olmak uzere) ekrana yansiyor.
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        recreate();
+                    }
+                }, 1000); //Execution of 'recreate()' will be delayed by 1 second to wait the completion of 'completeReservation()'
             }
         });
 
@@ -130,11 +159,11 @@ public class ProfilePage extends AppCompatActivity {
         }
 
         //=>uId'nin atanmasi sonrasinda cagrilmasi gerekli cunku reference icin login olan kullanicinin id'si kullaniliyor;
-        showActiveReservation();//**
+        showReservationOfUser();//**
     }
 
-    //*=>Active reservation of the logined user will be shown on the ProfilePage. Otherwise, the components/views will be left as default;
-    private void showActiveReservation(){
+    //*=>Active or ARRIVED reservation of the logined user will be shown on the ProfilePage. Otherwise, the components/views will be left as default;
+    private void showReservationOfUser(){
        DatabaseReference refReservation = FirebaseDatabase.getInstance().getReference().child("reservations");
        Query queryRes = refReservation.orderByChild("userId").equalTo(uId);
        queryRes.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -144,19 +173,35 @@ public class ProfilePage extends AppCompatActivity {
                 String reservationStatus = null;
                 Long rsvDateDb = null;
                 String reservedCarPark = null;
-
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     // Get the value of the reservationStatus field for the current reservation
                     reservationStatus = childSnapshot.child("reservationStatus").getValue(String.class);
-                    // Check if the reservationStatus is "active"
+
+                    /**=>Check if the reservationStatus is "ACTIVE" or "ARRIVED" since both status are unique by the control on the ReservationPage
+                        that does not allow the user to make a reservation if he/she has an active or arrived status reservation already;*/
+                    //Check the ACTIVE reservation status existence;
                     if (reservationStatus != null && reservationStatus.equals("ACTIVE")) {
                         hasActiveReservation = true;
-                        //reservationId = childSnapshot.getKey();
                         rsvDateDb = childSnapshot.child("reservationDate").getValue(Long.class);
                         reservedCarPark = childSnapshot.child("reservedCarPark").getValue(String.class);
                         break;
                     }
+                    //Check the ARRIVED reservation status existence;
+                    if(reservationStatus != null && reservationStatus.equals("ARRIVED")){
+                        isUserArrived = true;
+                        reservedCarPark = childSnapshot.child("reservedCarPark").getValue(String.class);
+                        break;
+                    }
                 }
+
+                //=>If Handler is stopped and 'showReservationOfUser()' is called on the onCreate() again, this control will be provided to
+                //assign the reserved car park name on 'txtCarParkName' view and making the 'Complete Reservation' button visible;
+                if(isUserArrived){
+                    lblReservationInfo.setText("Arrived Reservation Information"); //changing the 'Active' res. info label of user as 'Arrived' on the layout page.
+                    txtCarParkName.setText(reservedCarPark);
+                    btnTerminateReservation.setVisibility(View.VISIBLE);
+                }
+
                 if (hasActiveReservation) {
                     // The user has an active reservation
                     txtCarParkName.setText(reservedCarPark);
@@ -175,7 +220,10 @@ public class ProfilePage extends AppCompatActivity {
                                 if (rsvDate != null) {
                                 /*=>'isReservationCompleted' true ise aktif rezervasyon tamamlanmis/iptal edilmis(statusu 'PASSIVE' olarak guncellenmis) demektir ve bu sebeple
                                     Handler'in calismasi durdurulup ProfilePage activity'si (sayfasi) yeniden cagrilabilir.*/
-                                    if (isReservationCompleted) {
+
+                                   /*=>Benzer bir mantikla 'Open Lock' butonuna basilip kullanici yarim saat icerisinde rezervasyonuna vardiysa ve 'ACTIVE' rez. statusunu
+                                        'ARRIVED' olarak guncellediyse de Handler'in calismasi durdurulup sayfa yeniden baslatilir ve onCreate() yeniden cagrilir.*/
+                                    if (isReservationCompleted || isUserArrived) {
                                         handler.removeCallbacksAndMessages(null);
                                         recreate(); /*Aktif rezervasyonun statusu PASSIVE olarak guncellendikten sonra artik Handler ile zaman artisini saglayacak guncellemenin onune
                                    gecmek ve sayfayi yeniden baslatmak adina sayfayi yeniden tetikleyen ve sirasiyla onDestroy() ve onCreate() metotlarini cagiran 'recreate()'
@@ -201,7 +249,8 @@ public class ProfilePage extends AppCompatActivity {
                     //=>Aktif rezervasyon olmadiginda INVISIBLE olan butonlar VISIBLE hale getirilir ve ekranda gorunur olacak sekilde guncellenir;
                     btnOpenLock.setVisibility(View.VISIBLE);
                     btnCancelReservation.setVisibility(View.VISIBLE);
-                } else {
+                }
+                else {
                     // The user does not have an active reservation
                     System.out.println("Logined user's active reservation information cannot be fetched!");
                 }
@@ -261,7 +310,12 @@ public class ProfilePage extends AppCompatActivity {
                 String rsvStatus = null;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     rsvStatus = snapshot.child("reservationStatus").getValue(String.class);
-                    if (rsvStatus != null && rsvStatus.equals("ACTIVE")) { // Check if the reservation's status is "ACTIVE";
+
+                    //New *=>
+                    /** => A condition for "ARRIVED" status is added to complete the arrived reservation. It will be trigerred when the user clicks on the
+                     * 'Complete Reservation' button after it becomes visible when the user clicks on the 'Open Lock' button and updates the 'ACTIVE' reservation status
+                     * as 'ARRIVED' on the Realtime database in order to open the lock system that holds the charging cable behind it to charge the electrical vehicle.*/
+                    if (rsvStatus != null && (rsvStatus.equals("ACTIVE") || rsvStatus.equals("ARRIVED"))) { // Check if the reservation's status is "ACTIVE";
                         String id = snapshot.getKey();
                         DatabaseReference idRef = refReservation.child(id);
                         idRef.child("reservationStatus").setValue("PASSIVE", new DatabaseReference.CompletionListener() {
@@ -271,10 +325,7 @@ public class ProfilePage extends AppCompatActivity {
                                     Toast.makeText(ProfilePage.this, "Reservation is completed/cancelled!", Toast.LENGTH_SHORT).show();
                                     updateCarParkAvailability(snapshot.child("reservedCarPark").getValue(String.class));
                                     //--------------------------------------------------------
-                                    //=>Arduino Connection-Open The Lock System;
-                                    /*=>The below method is called after the reservation is applied successfully in order to trigger the servo motor on the NodeMCU
-                                       which will close the lock system that is connected to it;*/
-                                       ArduinoConnection.sendCommand("/Lock=ON");
+                                    openLock();
                                     //--------------------------------------------------------
                                 } else {
                                     Toast.makeText(ProfilePage.this, "Reservation cannot be completed/cancelled!", Toast.LENGTH_SHORT).show();
@@ -298,11 +349,6 @@ public class ProfilePage extends AppCompatActivity {
     //=>Arka planda 30 dakikayi gecmesi ve ProfilePage acilinca bu rezervasyonun dusmesinin gereklililigini de goz onunde bulundurarak 30 dakika veya daha uzun bir sure
     //gecmisse aktif rezervasyonun tamamlanmasi/iptali saglanacak;
     private void checkDurationOfReservation() throws ParseException {
-        /*if(txtDuration.getText().toString().equals("30:00")){
-            completeReservation(); //this method will update the status of active reservation as 'PASSIVE' to complete or cancel it.
-            // return;
-        }*/
-        //--------------------------------------------------------------------------------------
         String duration = txtDuration.getText().toString();
         SimpleDateFormat format = new SimpleDateFormat("mm:ss");
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -315,7 +361,7 @@ public class ProfilePage extends AppCompatActivity {
     }
 
     //=>It updates the availability of car park as true (available) where the user made reservation after the reservation is completed or cancelled;
-    private void updateCarParkAvailability(String carPark){
+    public static void updateCarParkAvailability(String carPark){
         DatabaseReference refLoc = FirebaseDatabase.getInstance().getReference().child("locations");
         Query queryLocations = refLoc.orderByChild("title").equalTo(carPark);
         queryLocations.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -332,6 +378,53 @@ public class ProfilePage extends AppCompatActivity {
                 // Handle error
             }
         });
+    }
+
+    //*=>Below method will be triggered when the user clicks on the 'Open Lock' method to update the status of 'ACTIVE' reservation as 'ARRIVED';
+    private void arrivedForReservation(){
+        DatabaseReference refActiveReservation = FirebaseDatabase.getInstance().getReference().child("reservations");
+        Query userRes = refActiveReservation.orderByChild("userId").equalTo(uId);
+        userRes.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String resStatus = "";
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    resStatus = childSnapshot.child("reservationStatus").getValue(String.class);
+                    if (resStatus != null && resStatus.equals("ACTIVE")) { //check for the active reservation of the logined user (unique).
+                        String id = childSnapshot.getKey();
+                        DatabaseReference idRef = refActiveReservation.child(id);
+                        /**=>The status of the unique 'ACTIVE' reservation will be updated as 'ARRIVED' when the user clicks the 'OPEN' button
+                         and that shows he/she arrives for the reservation in 30 minutes. This status will also be unique by controlling it with the 'ACTIVE'
+                         status on the 'Reservation Page' since the user cannot make a reservation if he/she has an ACTIVE or ARRIVED reservation;*/
+                        idRef.child("reservationStatus").setValue("ARRIVED", new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                if (error == null) {
+                                    Toast.makeText(ProfilePage.this, "The user is arrived for the reservation.", Toast.LENGTH_SHORT).show();
+                                    //--------------------------------------------------------
+                                    openLock();
+                                    //--------------------------------------------------------
+                                } else {
+                                    Toast.makeText(ProfilePage.this, "Arrive operation cannot be handled!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                        isUserArrived = true;
+                        break;
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    //=>Arduino Connection-Open The Lock System;
+    /*=>The below method is called after the reservation is applied successfully in order to trigger the servo motor on the NodeMCU
+       which will close the lock system that is connected to it;*/
+    private void openLock(){
+        ArduinoConnection.sendCommand("/Lock=ON");
     }
 }
 
@@ -355,10 +448,26 @@ public class ProfilePage extends AppCompatActivity {
  *    tamamlandigi/iptal edildigi icin musait olarak ('isAvailable:true') guncellenir. *
  * */
 
-//TODO: 'Open' butonuna tiklanildiginda kilit acilsa da 'isAvailable' kolonunun true olarak guncellenmemesi daha dogru olur. Kullanici aracini sarj ettiginde bu alanin musait
+/*=>DONE TO DO(S);
+//=>'Open' butonuna tiklanildiginda kilit acilsa da 'isAvailable' kolonunun true olarak guncellenmemesi daha dogru olur. Kullanici aracini sarj ettiginde bu alanin musait
 // olarak gozukmemesi gerektiginden buna ait bir kontrol eklenecek veya 'Open' butonu yalnizca kilidi acacak, isAvailability alanini guncellemeyecek. 'Complete Reservation' gibi
 // farkli bir metot eklenip kullanici islemini bitirince bu butona tikladiginda rezervasyon tamamlanip 'isAvailable' alani true olarak guncellenip car park musait hale getirilebilir.
+//=>Kullanici profil sayfasini actiginda yarim saat gecmesi halinde rezervasyonu iptal etme durumunu otomatik bir hale getirip job kontrolu gibi kullanicinin ProfilePage'i tekrar
+//  manuel olarak acmasina gerek olmadan iptal edilebilmesi dusunulebilir.*/
 
-//TODO: Kullanici profil sayfasini actiginda yarim saat gecmesi halinde rezervasyonu iptal etme durumunu otomatik bir hale getirip job kontrolu gibi kullanicinin ProfilePage'i tekrar
-//  manuel olarak acmasina gerek olmadan iptal edilebilmesi dusunulebilir.
+
+/** NOT:: Saniyede bir Handler araciyla yeniden tetiklenen ve Realtime Db'de login olan kullanici icin ACTIVE res. olmasi halinde resDate donerek if bloguna dahil olup calisan yapi icin
+ * (showReservationOfUser() metodu icerisinde) her saniye kontrol edilen run metodunda 'isReservationCompleted'a ek olarak or operatoru ile 'isUserArrived' kosulu da eklendi.
+ * Kullanici 'Open Lock' butonuna basip 'isUserArrived' degiskenini true olarak guncellediginde bu Handler'in calismasi durdurulacak ve sayfa recreate() edilip onCreate() metodu
+ * tekrar cagrildiginda txtDuration degeri 'X' olacagindan 'checkDurationOfReservation()' metodundaki yarim saat kontrolu txtDuration uzerinde yapilmayacak ve 'ARRIVED' statuye
+ * guncellenen rezervasyon icin tamamlanan veya iptal olan (statusu 'PASSIVE' olarak guncellenen) rezervasyonlardan farkli olarak, rezervasyonun bagli bulundugu carPark'in
+ * RealTime Db'deki 'locations' altinda bulunan isAvailable' degeri 'true' olarak guncellenmeyecek. Boylece, bir kullanici 'Open Lock' butonuna bassa da aracini sarj etme islemi
+ * bitmeden rezervasyonu tamamlanmamis olacak.
+ *    === Buna ek olarak, yine 'showReservationOfUser()' metodu icerisine login olan kullanici icin 'ARRIVED' statulu rezervasyon varsa isUserArrived=true olarak guncelleyip
+ *    (for icerisindeki ikinci if kontrolu ile) car park name'inin alinmasi ve 'Complete Reservation' butonunun gorunur hale getirilmesi (for disindaki ilk if ile) belirtilerek
+ *    'Open Lock' butonuna tiklandiktan sonra Handler'in saniyelik kontrolu ile (yukarida detayli olarak belirtildigi gibi) tekrar tetiklenen onCreate() icerisinde cagrilan
+ *    showReservationOfUser() metodunda bu kontrol saglanmis olup statusu kilit acilinca 'ARRIVED' olarak guncellenen rezervasyona ait carParkName bilgisi ve ilgili buton
+ *    gorunurlugu tek bir metot icerisindeki kontrol ile aktif edilip bu dogrultuda guncelleme saglanmis olur. 'hasActiveReservation' false olacagindan diger if'e tekrar dahil
+ *    olunmaz.
+ * */
 

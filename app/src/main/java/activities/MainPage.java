@@ -1,6 +1,7 @@
 package activities;
 import static helpers.Constants.MAPVIEW_BUNDLE_KEY;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -10,6 +11,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
+
 import helpers.Constants;
 import com.example.capstoneproject_1.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,6 +29,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import fragments.CarParkDetailFragment;
 
@@ -88,6 +97,7 @@ public class MainPage extends AppCompatActivity implements OnMapReadyCallback, G
     @Override
     protected void onResume() {
         super.onResume();
+        checkExceededReservations(); //=>It will check the active reservations which exceeds 30 minutes for every time this page is opened.
         mMapView.onResume();
     }
 
@@ -174,6 +184,49 @@ public class MainPage extends AppCompatActivity implements OnMapReadyCallback, G
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    /*=>This method checks the 'ACTIVE' reservations whose reservations date exceeds 30 minutes (by comparing it with the current time)
+        and updates their status as 'PASSIVE' status accordingly;*/
+    private void checkExceededReservations() {
+        DatabaseReference refReservations = FirebaseDatabase.getInstance().getReference().child("reservations");
+        refReservations.orderByChild("reservationStatus").equalTo("ACTIVE").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Long reservationDate = snapshot.child("reservationDate").getValue(Long.class);
+                    if (reservationDate != null) {
+                        long currentTime = System.currentTimeMillis();
+                        long timeDiffMillis = currentTime - reservationDate;
+                        long timeDiffMinutes = TimeUnit.MILLISECONDS.toMinutes(timeDiffMillis);
+                        //-----------------------------------------------------------------
+                        if (timeDiffMinutes >= 30) {
+                            // The reservation has passed thirty minutes, update the reservationStatus
+                            String reservationKey = snapshot.getKey();
+                            DatabaseReference reservationRef = refReservations.child(reservationKey);
+                            reservationRef.child("reservationStatus").setValue("PASSIVE", new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                    if (error == null) {
+                                        Toast.makeText(MainPage.this, "Active reservations which passes 30 minutes are updated!", Toast.LENGTH_SHORT).show();
+                                        //=>Belowed function is defined on the ProfilePage before and called to update the reserved car park's availability as available (true);
+                                        ProfilePage.updateCarParkAvailability(snapshot.child("reservedCarPark").getValue(String.class));
+                                    } else {
+                                        Toast.makeText(MainPage.this, "Active reservations cannot be updated!", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                            /*System.out.println(timeDiffMinutes);
+                            System.out.println(snapshot.child("reservedCarPark").getValue());*/
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle any errors that occur during the data retrieval
             }
         });
     }

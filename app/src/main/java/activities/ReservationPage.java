@@ -6,16 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.capstoneproject_1.R;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -26,11 +21,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
-import java.security.Timestamp;
 import java.util.HashMap;
 
 import models.ArduinoConnection;
-import models.User;
 
 public class ReservationPage extends AppCompatActivity {
     private  FirebaseAuth mAuth;
@@ -65,7 +58,7 @@ public class ReservationPage extends AppCompatActivity {
          * then the 'Apply' button will be set as disabled and a toast message will be given. Otherwise, the logined user can make a reservation as defined in the
          * 'makeReservation()' method which is called in the 'setOnClickListener()' method of 'btnApply' as below;*/
         btnApply = findViewById(R.id.btnApply);
-        checkActiveReservation(btnApply);
+        checkReservationConsistency(btnApply);
         btnApply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,7 +86,7 @@ public class ReservationPage extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        checkActiveReservation(btnApply);
+        checkReservationConsistency(btnApply);
     }
 
     private void makeReservation(){
@@ -120,7 +113,7 @@ public class ReservationPage extends AppCompatActivity {
                     /*=>The below method is called after the reservation is applied successfully in order to trigger the servo motor on the NodeMCU
                         which will close the lock system that is connected to it;*/
                      ArduinoConnection.sendCommand("/Lock=OFF");
-                    //--------------------------------------------------------
+                    //----------------------------------------------------S----
                 } else {
                     // Write failed
                     Toast.makeText(ReservationPage.this, "An error occured while reservation is added!",
@@ -130,8 +123,9 @@ public class ReservationPage extends AppCompatActivity {
         });
     }
 
-    //=>Login olan kullanicinin aktif rezervasyonu varsa(reservationStatus="ACTIVE") yeniden rezervasyon yapmasina izin verilmeyecek;
-    public void checkActiveReservation(Button btn){
+    /*=>Login olan kullanicinin ACTIVE veya ARRIVED ((resStatus.equals("ACTIVE") || resStatus.equals("ARRIVED")) rezervasyonu varsa yeniden rezervasyon
+       yapmasina izin verilmeyecek;*/
+    public void checkReservationConsistency(Button btn){
         //=>To get the reservation informations of the logined user from Firebase-Realtime Db;
         DatabaseReference refReservations = reference;
         Query query = refReservations.orderByChild("userId").equalTo(uId); //'equalTo()' creates a query constrained to only return child nodes with the given value.
@@ -140,9 +134,11 @@ public class ReservationPage extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot resSnapshot: snapshot.getChildren()) {
                     String resStatus = resSnapshot.child("reservationStatus").getValue(String.class);
-                    if(resStatus.equals("ACTIVE")){
+                    /*==> If the user has an ACTIVE or ARRIVED status reservation, he/she cannot make a new one since the active/arrived one is required to be
+                         completed at first;*/
+                    if(resStatus.equals("ACTIVE") || resStatus.equals("ARRIVED")){
                         btn.setEnabled(false);
-                        Toast.makeText(ReservationPage.this, "You already have an active reservation!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ReservationPage.this, "You already have an active or arrived reservation!", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
