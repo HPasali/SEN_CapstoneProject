@@ -61,7 +61,7 @@ public class MainPage extends AppCompatActivity implements OnMapReadyCallback, G
     private LatLng bauSouthCampus = new LatLng(41.04237536231388, 29.009312741127506);
     //private LatLng homeLocation; // = new LatLng(41.046647557244526, 29.002310684659246); //Ihlamurdere Caddesi,Besiktas
 
-    DatabaseReference reference; // = FirebaseDatabase.getInstance().getReferenceFromUrl("https://capstoneprojectdemo1-5706a-default-rtdb.firebaseio.com/");
+    DatabaseReference reference; // = FirebaseDatabase.getInstance().getReferenceFromUrl("https://capstoneprojectdb-a0940-default-rtdb.firebaseio.com/");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

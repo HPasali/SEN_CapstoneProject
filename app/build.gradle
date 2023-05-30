@@ -8,7 +8,7 @@ plugins {
 android {
     namespace 'com.example.capstoneproject_1'
     compileSdk 33
-
+    
     defaultConfig {
         applicationId "com.example.capstoneproject_1"
         minSdk 21

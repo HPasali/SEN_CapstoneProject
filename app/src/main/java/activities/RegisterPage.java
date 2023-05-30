@@ -24,7 +24,7 @@ import helpers.RegexPatterns;
 import models.User;
 
 //**Proje yeni bir Firebase db'sine baglandiginda bu projenin package'ini Firebase'de tanimlamak ve
-// "getReferenceFromUrl("https://capstoneprojectdemo1-5706a-default-rtdb.firebaseio.com/");" kullanilan yerlerdeki urlleri yeni RealtimeDb'nin url'i ile degismek gerekecek!!!
+// "getReferenceFromUrl("https://capstoneprojectdb-a0940-default-rtdb.firebaseio.com/");" kullanilan yerlerdeki urlleri yeni RealtimeDb'nin url'i ile degismek gerekecek!!!
 
 public class RegisterPage extends AppCompatActivity {
     /* //---------Regex Patterns;------------------------
@@ -43,7 +43,7 @@ public class RegisterPage extends AppCompatActivity {
     With this usage, all of the given registration informations can be added to the related parts of Firebase which are FirebaseAuthentication and RealtimeDatabase.*/
 
     FirebaseAuth mAuth; // = FirebaseAuth.getInstance();
-    DatabaseReference ref = FirebaseDatabase.getInstance().getReferenceFromUrl("https://capstoneprojectdemo2-default-rtdb.firebaseio.com/");
+    DatabaseReference ref = FirebaseDatabase.getInstance().getReferenceFromUrl("https://capstoneprojectdb-a0940-default-rtdb.firebaseio.com/");
     User newUser;
 
     @Override
