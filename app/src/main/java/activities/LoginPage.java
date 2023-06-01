@@ -12,6 +12,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.regex.Pattern;
 
@@ -83,7 +88,12 @@ public class LoginPage extends AppCompatActivity {
                     System.out.println("------------------------------------");
                     return;
                 }
-                mAuth.signInWithEmailAndPassword(email, password)
+                //---------=> New Draft;
+                //=>If an admin is logined, he/she will be redirected to the AdminPanel instead of MainPage which will be opened for app users via using the
+                //'signInWithEmailAndPassword()' method of FirebaseAuth below;
+                checkForAdmin(email,password); //*
+
+               /*mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -99,7 +109,7 @@ public class LoginPage extends AppCompatActivity {
                                             Toast.LENGTH_SHORT).show();
                                 }
                             }
-                        });
+                        });*/
                }
         });
     }
@@ -138,4 +148,60 @@ public class LoginPage extends AppCompatActivity {
         else
             return true;
     }
+
+    //-------------------------=> New Draft;
+    /*=>This method will compare the email and password values entered on the login page with the manually saved datas for the admin users on the "adminUsers" field of
+        Firebase Realtime Database;
+      =>If the logined user is not an admin, he/she will be redirected to the MainPage to make a reservation accordingly by checking the 'isUserAdmin' variable's value as below.
+      */
+    private void checkForAdmin(String email, String password){
+        DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference().child("adminUsers");
+        adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean isUserAdmin = false;
+                for(DataSnapshot adminSnapshot:snapshot.getChildren()){
+                    String adminEmail = adminSnapshot.child("email").getValue(String.class);
+                    String adminPsw = adminSnapshot.child("password").getValue(String.class);
+                    if(adminEmail.equals(email) && adminPsw.equals(password)){
+                        isUserAdmin = true;
+                        break;
+                    }
+                }
+                //=>If the logined user is admin, he/she will be redirected to the AdminPanel page instead of MainPage;
+                if(isUserAdmin){
+                    Toast.makeText(LoginPage.this, "The admin is logined, welcome!",Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(LoginPage.this, AdminPanel.class));
+                    finish();
+                }
+                else{
+                    mAuth.signInWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        //For successful sign-in(login);
+                                        Toast.makeText(LoginPage.this, "Logined successfully.",
+                                                Toast.LENGTH_SHORT).show();
+                                        //----------------------------
+                                        //String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); //??
+                                        //checkForAdmin(userId); //?? this redirects the user acc.to if it is admin or not by fetching the isAdmin value from the Realtime Db.
+                                        //----------------------------
+                                        Intent intent = new Intent(LoginPage.this,MainPage.class);
+                                        startActivity(intent);
+                                    } else {
+                                        // If sign in fails, display a message to the user.
+                                        Toast.makeText(LoginPage.this, "Login failed, please check your login credentials!",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+    //-----------------------------------------------------
 }

@@ -52,4 +52,6 @@ dependencies {
 
     // Firebase Realtime Database dependency
     implementation 'com.google.firebase:firebase-database:20.1.0'
+
+    implementation 'com.androidplot:androidplot-core:1.5.10' //to draw the graphics on AdminPanel
 }

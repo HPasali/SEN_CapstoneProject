@@ -16,9 +16,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.regex.Pattern;
 import helpers.RegexPatterns;
 import models.User;
@@ -80,7 +83,11 @@ public class RegisterPage extends AppCompatActivity {
                     return;
                 }
 
-                mAuth.createUserWithEmailAndPassword(email, password)
+                //----------------=> New Draft;
+                completeRegistration(email,password,name,surname,phoneNumber);
+                //---------------------------------
+
+                /*mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -125,7 +132,8 @@ public class RegisterPage extends AppCompatActivity {
                                     }
                                 }
                             }
-                        });
+                        });*/
+
             }
         });
     }
@@ -166,4 +174,83 @@ public class RegisterPage extends AppCompatActivity {
         else
             return true;
     }
+
+    //----------------=> New Draft;
+    //=>Check if already an admin account is exist on the Firebase-Realtime Database with the entered email by the user since admin infos saved manually to database.
+    //If there is an exist account of admin with the entered email address, then he/she cannot register to the system. He/she can register otherwise;
+    private void completeRegistration(String email,String password,String name,String surname,String phoneNumber){
+        DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference().child("adminUsers");
+        adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean isEMailUsedByAdmin = false;
+                for(DataSnapshot adminSnapshot:snapshot.getChildren()){
+                    String adminEmail = adminSnapshot.child("email").getValue(String.class);
+                    if(adminEmail.equals(email)){
+                        isEMailUsedByAdmin = true;
+                        break;
+                    }
+                }
+                if(isEMailUsedByAdmin){
+                    Toast.makeText(RegisterPage.this,"This e-mail is in use already!",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else{
+                    mAuth.createUserWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        // Create a new user object with additional data
+                                        newUser = new User(name, email, surname, phoneNumber);
+                                        //newUser.setAdmin(isUserAdmin); //??
+                                        //System.out.println(newUser.getName());
+                                        addExtraInfo(mAuth.getCurrentUser().getUid(), newUser);
+
+                                        //For successful sign-up;
+                                        Toast.makeText(RegisterPage.this, "User is registered successfully.",
+                                                Toast.LENGTH_SHORT).show();
+
+                                        //move to Login Page
+                                        Intent intent = new Intent(RegisterPage.this,LoginPage.class);
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("emailOfUser", email);
+                                        bundle.putString("passwordOfUser", password);
+                                        intent.putExtras(bundle);
+                                        startActivity(intent);
+
+                                    } else {
+                                        // If sign-up fails, display a message to the user after catching the Firebase error with try-catch blocks;
+                                        try{
+                                            throw task.getException();
+                                        }
+                                        catch(FirebaseAuthWeakPasswordException ex){
+                                            Toast.makeText(RegisterPage.this, "Your password is too weak - Firebase Error",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch(FirebaseAuthInvalidCredentialsException ex){
+                                            Toast.makeText(RegisterPage.this, "Your email is invalid or already in use, please re-enter it - Firebase Error",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch(FirebaseAuthUserCollisionException ex){
+                                            Toast.makeText(RegisterPage.this, "User is already registered with this email, try another email - Firebase Error",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch (Exception ex){
+                                            Toast.makeText(RegisterPage.this, "Registration failed.",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+                            });
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+    //----------------------------
+
 }
