@@ -6,11 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.capstoneproject_1.R;
@@ -121,7 +123,7 @@ public class ProfilePage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //completeReservation();
-                arrivedForReservation(); //=>New *==>
+                arrivedForReservation();
             }
         });
 
@@ -311,7 +313,6 @@ public class ProfilePage extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     rsvStatus = snapshot.child("reservationStatus").getValue(String.class);
 
-                    //New *=>
                     /** => A condition for "ARRIVED" status is added to complete the arrived reservation. It will be trigerred when the user clicks on the
                      * 'Complete Reservation' button after it becomes visible when the user clicks on the 'Open Lock' button and updates the 'ACTIVE' reservation status
                      * as 'ARRIVED' on the Realtime database in order to open the lock system that holds the charging cable behind it to charge the electrical vehicle.*/
@@ -325,7 +326,7 @@ public class ProfilePage extends AppCompatActivity {
                                     Toast.makeText(ProfilePage.this, "Reservation is completed/cancelled!", Toast.LENGTH_SHORT).show();
                                     updateCarParkAvailability(snapshot.child("reservedCarPark").getValue(String.class));
                                     //--------------------------------------------------------
-                                    openLock();
+                                    openLock(snapshot.child("reservedCarPark").getValue(String.class)); //reserved car park will be sent as a parameter to be checked.
                                     //--------------------------------------------------------
                                 } else {
                                     Toast.makeText(ProfilePage.this, "Reservation cannot be completed/cancelled!", Toast.LENGTH_SHORT).show();
@@ -402,7 +403,7 @@ public class ProfilePage extends AppCompatActivity {
                                 if (error == null) {
                                     Toast.makeText(ProfilePage.this, "The user is arrived for the reservation.", Toast.LENGTH_SHORT).show();
                                     //--------------------------------------------------------
-                                    openLock();
+                                    openLock(childSnapshot.child("reservedCarPark").getValue(String.class)); //reserved car park will be sent as a parameter to be checked.
                                     //--------------------------------------------------------
                                 } else {
                                     Toast.makeText(ProfilePage.this, "Arrive operation cannot be handled!", Toast.LENGTH_SHORT).show();
@@ -423,9 +424,12 @@ public class ProfilePage extends AppCompatActivity {
     //=>Arduino Connection-Open The Lock System;
     /*=>The below method is called after the reservation is applied successfully in order to trigger the servo motor on the NodeMCU
        which will close the lock system that is connected to it;*/
-    private void openLock(){
-        ArduinoConnection.sendCommand("/Lock=ON");
+    private void openLock(String resCarPark){
+        //*The lock system will be triggered if the reserved car park is 'BAU South Campus';
+        if(resCarPark.equals("BAU South Campus"))
+           ArduinoConnection.sendCommand("/Lock=ON");
     }
+
 }
 
 /** Note: 1- The duration TextView's value will be checked only once via calling 'checkDurationOfRes()' in the 'onCreate()' method (the 'onCreate()' method of an Activity in

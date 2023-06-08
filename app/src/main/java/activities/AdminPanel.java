@@ -128,8 +128,8 @@ public class AdminPanel extends AppCompatActivity {
                 double spRatio = snapshot.child("solarPanelRatio").getValue(Double.class);
                 double egPerRatio = (egRatio/(egRatio+spRatio)) * 100;
                 double spPerRatio = (spRatio/(egRatio+spRatio)) * 100;
-                txtCurValElGrid.setText(String.valueOf(elGridCurrentValue) + " A");
-                txtCurValSolPanel.setText(String.valueOf(spCurrentValue) + " A");
+                txtCurValElGrid.setText(String.format("%.2f", elGridCurrentValue) + " A");
+                txtCurValSolPanel.setText(String.format("%.2f", spCurrentValue) + " A");
                 drawChart(egPerRatio,spPerRatio);
             }
             @Override

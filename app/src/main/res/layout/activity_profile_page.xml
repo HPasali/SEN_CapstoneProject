@@ -251,14 +251,16 @@
 
     <FrameLayout
         android:id="@+id/container_edit"
-        android:layout_width="400dp"
-        android:layout_height="724dp"
+        android:layout_width="449dp"
+        android:layout_height="733dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.592"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.717"></FrameLayout>
+        app:layout_constraintVertical_bias="0.717">
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/txtWarningMessage"
@@ -300,5 +302,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.234" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

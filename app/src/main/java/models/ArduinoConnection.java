@@ -6,7 +6,7 @@ import java.net.Socket;
 
 public class ArduinoConnection {
     private static Socket socket;
-    private static final String IP_ADDRESS = "192.168.43.160"; //IP address of the ESP8266 WIFI module.
+    private static final String IP_ADDRESS = "192.168.43.141"; //IP address of the ESP8266 WIFI module.
     private static final int PORT = 80; //Port of the ESP8266 WIFI module.
     private static OutputStream outputStream;
     private static PrintWriter printWriter;

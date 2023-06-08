@@ -112,7 +112,10 @@ public class ReservationPage extends AppCompatActivity {
                     //=>Arduino Connection-Close The Lock System;
                     /*=>The below method is called after the reservation is applied successfully in order to trigger the servo motor on the NodeMCU
                         which will close the lock system that is connected to it;*/
-                     ArduinoConnection.sendCommand("/Lock=OFF");
+                    //=>It will not trigger the lock system if the reservation is made for another location;
+                     if(selectedCarPark.equals("BAU South Campus")){
+                         ArduinoConnection.sendCommand("/Lock=OFF");
+                     }
                     //----------------------------------------------------S----
                 } else {
                     // Write failed

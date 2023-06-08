@@ -37,6 +37,7 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import fragments.CarParkDetailFragment;
+import models.ArduinoConnection;
 
 /**Note 1:: A new project and api-key is created on Google Cloud platform. Then this created api-key is given in local.properties in order to be able to fetch the map which is
  * provided by Google Maps. Then this map is placed onto the 'mapViewCarPark' "MapView" that is created on 'acitivity_main_page' layout file.
@@ -203,6 +204,9 @@ public class MainPage extends AppCompatActivity implements OnMapReadyCallback, G
                         long timeDiffMinutes = TimeUnit.MILLISECONDS.toMinutes(timeDiffMillis);
                         //-----------------------------------------------------------------
                         if (timeDiffMinutes >= 30) {
+                            if(snapshot.child("reservedCarPark").getValue(String.class).equals("BAU South Campus")){
+                                ArduinoConnection.sendCommand("/Lock=ON");
+                            }
                             // The reservation has passed thirty minutes, update the reservationStatus
                             String reservationKey = snapshot.getKey();
                             DatabaseReference reservationRef = refReservations.child(reservationKey);
